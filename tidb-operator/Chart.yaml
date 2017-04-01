@@ -1,0 +1,15 @@
+apiVersion: v1
+description: PingCAP tidb-operator Helm chart for Kubernetes
+name: tidb-operator
+version: 0.1.0
+home: https://github.com/pingcap/tidb-operator
+sources:
+  - https://github.com/pingcap/tidb-operator
+keywords:
+  - newsql
+  - database
+  - mysql
+  - raft
+maintainers:
+  - name: Tennix
+    email: ztennix@gmail.com

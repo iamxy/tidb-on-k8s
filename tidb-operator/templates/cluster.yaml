@@ -1,0 +1,21 @@
+{{- if and .Values.cluster.enabled (not .Release.IsInstall) -}}
+apiVersion: "pingcap.com/v1"
+kind: "TidbCluster"
+metadata:
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    app: "{{ template "fullname" . }}"
+    heritage: "{{ .Release.Service }}"
+    release: "{{ .Release.Name }}"
+  name: "{{ .Values.cluster.name }}"
+spec:
+  pd:
+    size: {{ .Values.cluster.pd.size }}
+    image: "{{ .Values.cluster.pd.image }}"
+  tidb:
+    size: {{ .Values.cluster.tidb.size }}
+    image: "{{ .Values.cluster.tidb.image }}"
+  tikv:
+    size: {{ .Values.cluster.tikv.size }}
+    image: "{{ .Values.cluster.tikv.image }}"
+{{- end -}}

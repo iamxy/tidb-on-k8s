@@ -1,0 +1,29 @@
+{{- $clusterEnabled := (and (not .Release.IsInstall) .Values.cluster.enabled) -}}
+{{- if and .Release.IsInstall .Values.cluster.enabled -}}
+Not enabling cluster, the ThirdPartResource must be installed before you can create a Cluster. Continuing rest of normal deployment.
+
+{{ end -}}
+
+{{- if $clusterEnabled -}}
+1. Watch tidb cluster start
+  kubectl get pods -l tidb_cluster={{ .Values.cluster.name }} --namespace {{ .Release.Namespace }} -w
+2. Confirm tidb cluster is healthy
+  $ kubectl run --rm -i --tty tidb-test --image busybox --restart=Never -- /bin/sh -c "wget -qO- http://{{ .Values.cluster.name }}-tidb:10080/status"
+
+3. Interact with the cluster!
+  $ kubectl run --rm -i --tty tidb-test --image mysql:5.7 --restart=Never -- /bin/bash
+  / # mysql -h {{ .Values.cluster.name }}-tidb -P 4000 -u root
+  (ctrl-D to exit)
+4. Optional
+  Check the tidb-operator logs
+  export POD=$(kubectl get pods -l app={{ template "fullname" . }} --namespace {{ .Release.Namespace }} --output name)
+  kubectl logs $POD --namespace={{ .Release.Namespace }}
+
+{{- else -}}
+1. tidb-operator deployed.
+  If you would like to deploy an tidb-cluster set cluster.enabled to true in values.yaml
+  Check the tidb-operator logs
+    export POD=$(kubectl get pods -l app={{ template "fullname" . }} --namespace {{ .Release.Namespace }} --output name)
+    kubectl logs $POD --namespace={{ .Release.Namespace }}
+
+{{- end -}}
